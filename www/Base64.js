@@ -8,24 +8,23 @@ Base64.prototype.encodeFile = function(filePath, sucess, failure) {
 	var args = {};
 	args.filePath = filePath;
 	//handle android using native code because toDataURL is not supported on android version < 3
-	if (device.platform == "Android")
+	if (false && device.platform == "Android")
 		cordova.exec(sucess, failure, "Base64", "encodeFile", [args]);
-	else{
-		var c = document.createElement('canvas');
-		var ctx = c.getContext("2d");
-		var img = new Image();
+	else {
 		
-		img.onload = function() {
-			c.width = this.width;
-			c.height = this.height;
+		function gotFile(f) {
+			f.file(function(file) {
+				var reader = new FileReader();
+				reader.onloadend = function(e) {
+					var content = this.result;
+					sucess(content);
+				};
+				
+				reader.readAsDataURL(file)
+			});
+		}
 
-			ctx.drawImage(img, 0, 0);
-
-			var dataUri = c.toDataURL("image/png");
-			
-			sucess(dataUri);
-		};
-		img.src = filePath;
+		window.resolveLocalFileSystemURL('file://'+filePath, gotFile, failure);
 	}
 }
 

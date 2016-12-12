@@ -27,6 +27,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.text.Html;
 import android.util.Base64;
+import android.webkit.MimeTypeMap;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -79,12 +80,22 @@ public class Base64Plugin extends CordovaPlugin {
 			FileInputStream fileInputStream = new FileInputStream(imageFile);
 			fileInputStream.read(bytes);
 
+			String mime = getMimeType(filePath);
 			imgStr = Base64.encodeToString(bytes, Base64.DEFAULT);
-			imgStr = "data:image/*;charset=utf-8;base64," + imgStr;
+			imgStr = "data:"+mime+";charset=utf-8;base64," + imgStr;
 		} catch (Exception e) {
 			return imgStr;
 		}
 		return imgStr;		
+	}
+	
+	private static String getMimeType(String uri) {
+		String type = null;
+		String extension = MimeTypeMap.getFileExtensionFromUrl(uri);
+		if (extension != null) {
+			type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+		}
+		return type;
 	}
 	
 
