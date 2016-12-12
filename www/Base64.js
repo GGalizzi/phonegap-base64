@@ -8,7 +8,7 @@ Base64.prototype.encodeFile = function(filePath, sucess, failure) {
 	var args = {};
 	args.filePath = filePath;
 	//handle android using native code because toDataURL is not supported on android version < 3
-	if (false && device.platform == "Android")
+	if (device.platform == "Android")
 		cordova.exec(sucess, failure, "Base64", "encodeFile", [args]);
 	else {
 		
